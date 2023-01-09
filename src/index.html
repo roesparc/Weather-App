@@ -6,5 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather App</title>
   </head>
-  <body></body>
+  <body>
+    <header>
+      <h1>Weather App</h1>
+
+      <form class="search-form">
+        <input type="search" id="search-input" placeholder="Enter location" />
+        <button>Search</button>
+      </form>
+
+      <div class="unit-selector">
+        <div>°C</div>
+        <div>°F</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="temperature-info-container">
+        <h3 id="location"></h3>
+        <p id="temperature"></p>
+        <p id="weather-description"></p>
+        <div>
+          <p>Feels Like</p>
+          <p id="feels-like"></p>
+        </div>
+        <div>
+          <p>Humidity</p>
+          <p id="humidity"></p>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
