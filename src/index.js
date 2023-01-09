@@ -3,11 +3,36 @@ import "./style.css";
 const searchForm = document.querySelector(".search-form");
 searchForm.addEventListener("submit", searchSubmit);
 
+const unitSelector = document.querySelector(".unit-selector");
+unitSelector.addEventListener("click", unitSelectorClick);
+
 function searchSubmit(event) {
   event.preventDefault();
   getWeatherData()
     .then((data) => displayWeather(data))
     .catch((error) => handleErrors(error));
+}
+
+function unitSelectorClick(event) {
+  selectUnit(event.target);
+  updateUnits();
+}
+
+function selectUnit(target) {
+  const childElements = document.querySelectorAll(".unit-selector > div");
+  childElements.forEach((child) => child.classList.remove("selected-unit"));
+
+  target.classList.add("selected-unit");
+}
+
+function updateUnits() {
+  const temperature = document.querySelector("#temperature");
+
+  if (temperature.textContent) {
+    getWeatherData()
+      .then((data) => displayWeather(data))
+      .catch((error) => handleErrors(error));
+  }
 }
 
 function getLocationData(location) {
@@ -48,7 +73,6 @@ async function getWeatherData() {
     );
     const weatherData = await weatherResponse.json();
 
-    console.log(weatherData);
     return weatherData;
   } catch (error) {
     return Promise.reject(error);
@@ -92,8 +116,15 @@ function displayHumidity(data) {
 }
 
 function convertTemperature(data) {
-  const toCelsius = Math.round(data - 273.15);
-  return `${toCelsius} °C`;
+  const currentUnit = document.querySelector(".selected-unit");
+
+  if (currentUnit.textContent === "°C") {
+    const toCelsius = Math.round(data - 273.15);
+    return `${toCelsius} °C`;
+  }
+
+  const toFahrenheit = Math.round((data - 273.15) * (9 / 5) + 32);
+  return `${toFahrenheit} °F`;
 }
 
 function handleErrors(error) {
