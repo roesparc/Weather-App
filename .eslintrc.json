@@ -18,6 +18,7 @@
         "variables": true,
         "allowNamedExports": false
       }
-    ]
+    ],
+    "no-alert": "off"
   }
 }
