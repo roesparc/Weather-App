@@ -6,15 +6,9 @@ searchForm.addEventListener("submit", searchSubmit);
 const unitSelector = document.querySelector(".unit-selector");
 unitSelector.addEventListener("click", unitSelectorClick);
 
-const init = () => {
-  getWeatherData("Mexico City")
-    .then((data) => displayWeather(data))
-    .catch((error) => handleErrors(error));
-};
-init();
-
 function searchSubmit(event) {
   event.preventDefault();
+  toggleLoadingSpinner(true);
   updateWeather(true);
 }
 
@@ -24,17 +18,19 @@ function unitSelectorClick(event) {
 }
 
 function updateWeather(input) {
-  let location;
-
-  if (input) {
-    location = document.querySelector("#search-input").value;
-  } else {
-    location = document.querySelector("#location").textContent;
-  }
+  const location = determineLocation(input);
 
   getWeatherData(location)
     .then((data) => displayWeather(data))
     .catch((error) => handleErrors(error));
+}
+
+function determineLocation(input) {
+  if (input) {
+    return document.querySelector("#search-input").value;
+  }
+
+  return document.querySelector("#location").textContent;
 }
 
 function selectUnit(target) {
@@ -80,7 +76,6 @@ async function getWeatherData(location) {
     );
     const weatherData = await weatherResponse.json();
 
-    console.log(weatherData);
     return weatherData;
   } catch (error) {
     return Promise.reject(error);
@@ -94,6 +89,7 @@ function displayWeather(weatherData) {
   displayWeatherDescription(weatherData);
   displayFeelsLike(weatherData);
   displayHumidity(weatherData);
+  toggleLoadingSpinner();
   updateBackgroundColor(weatherData);
 }
 
@@ -130,6 +126,19 @@ function displayFeelsLike(data) {
 function displayHumidity(data) {
   const humidity = document.querySelector("#humidity");
   humidity.textContent = `${data.main.humidity}%`;
+}
+
+function toggleLoadingSpinner(activate) {
+  const loadingSpinner = document.querySelector(".fa-spinner");
+  const tempInfo = document.querySelector(".temperature-info-container");
+
+  if (activate) {
+    loadingSpinner.classList.remove("no-display");
+    tempInfo.classList.add("no-display");
+  } else {
+    loadingSpinner.classList.add("no-display");
+    tempInfo.classList.remove("no-display");
+  }
 }
 
 function updateBackgroundColor(data) {
@@ -170,3 +179,10 @@ function handleErrors(error) {
     alert(error);
   }
 }
+
+const init = () => {
+  getWeatherData("Mexico City")
+    .then((data) => displayWeather(data))
+    .catch((error) => handleErrors(error));
+};
+init();
