@@ -73,6 +73,7 @@ async function getWeatherData() {
     );
     const weatherData = await weatherResponse.json();
 
+    console.log(weatherData);
     return weatherData;
   } catch (error) {
     return Promise.reject(error);
@@ -81,15 +82,24 @@ async function getWeatherData() {
 
 function displayWeather(weatherData) {
   displayLocation(weatherData);
+  displayWeatherImage(weatherData);
   displayTemperature(weatherData);
   displayWeatherDescription(weatherData);
   displayFeelsLike(weatherData);
   displayHumidity(weatherData);
+  updateBackgroundColor(weatherData);
 }
 
 function displayLocation(data) {
   const location = document.querySelector("#location");
   location.textContent = data.name;
+}
+
+function displayWeatherImage(data) {
+  const { icon } = data.weather[0];
+
+  const weatherImage = document.querySelector("#weather-image");
+  weatherImage.src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
 }
 
 function displayTemperature(data) {
@@ -113,6 +123,19 @@ function displayFeelsLike(data) {
 function displayHumidity(data) {
   const humidity = document.querySelector("#humidity");
   humidity.textContent = `${data.main.humidity}%`;
+}
+
+function updateBackgroundColor(data) {
+  const tempInfo = document.querySelector(".temperature-info-container");
+  const { icon } = data.weather[0];
+
+  if (icon.slice(-1) === "d") {
+    tempInfo.classList.remove("night");
+    tempInfo.classList.add("day");
+  } else {
+    tempInfo.classList.add("night");
+    tempInfo.classList.remove("day");
+  }
 }
 
 function convertTemperature(data) {
