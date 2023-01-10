@@ -6,16 +6,35 @@ searchForm.addEventListener("submit", searchSubmit);
 const unitSelector = document.querySelector(".unit-selector");
 unitSelector.addEventListener("click", unitSelectorClick);
 
-function searchSubmit(event) {
-  event.preventDefault();
-  getWeatherData()
+const init = () => {
+  getWeatherData("Mexico City")
     .then((data) => displayWeather(data))
     .catch((error) => handleErrors(error));
+};
+init();
+
+function searchSubmit(event) {
+  event.preventDefault();
+  updateWeather(true);
 }
 
 function unitSelectorClick(event) {
   selectUnit(event.target);
-  updateUnits();
+  updateWeather();
+}
+
+function updateWeather(input) {
+  let location;
+
+  if (input) {
+    location = document.querySelector("#search-input").value;
+  } else {
+    location = document.querySelector("#location").textContent;
+  }
+
+  getWeatherData(location)
+    .then((data) => displayWeather(data))
+    .catch((error) => handleErrors(error));
 }
 
 function selectUnit(target) {
@@ -23,16 +42,6 @@ function selectUnit(target) {
   childElements.forEach((child) => child.classList.remove("selected-unit"));
 
   target.classList.add("selected-unit");
-}
-
-function updateUnits() {
-  const temperature = document.querySelector("#temperature");
-
-  if (temperature.textContent) {
-    getWeatherData()
-      .then((data) => displayWeather(data))
-      .catch((error) => handleErrors(error));
-  }
 }
 
 function getLocationData(location) {
@@ -59,11 +68,9 @@ function getLocationData(location) {
   });
 }
 
-async function getWeatherData() {
+async function getWeatherData(location) {
   try {
-    const searchInput = document.querySelector("#search-input");
-
-    const locationData = await getLocationData(searchInput.value);
+    const locationData = await getLocationData(location);
 
     const { lat, lon } = locationData[0];
 
@@ -127,6 +134,8 @@ function displayHumidity(data) {
 
 function updateBackgroundColor(data) {
   const tempInfo = document.querySelector(".temperature-info-container");
+  tempInfo.classList.remove("no-display");
+
   const { icon } = data.weather[0];
 
   if (icon.slice(-1) === "d") {
