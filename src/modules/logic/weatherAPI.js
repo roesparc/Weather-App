@@ -3,7 +3,7 @@ const apiKey = "64376a19b2c057c2cb433188bcfe9a0a";
 const getLocationData = (location) =>
   new Promise((resolve, reject) => {
     fetch(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${apiKey}`,
+      `https://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${apiKey}`,
       { mode: "cors" }
     )
       .then((response) => {
